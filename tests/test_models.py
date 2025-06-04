@@ -225,6 +225,16 @@ class TestInferenceClientModel:
             "role conversion should be applied"
         )
 
+    def test_call_with_empty_custom_role_conversions(self):
+        model = InferenceClientModel(model_id="test-model", custom_role_conversions={})
+        model.client = MagicMock()
+        mock_response = model.client.chat_completion.return_value
+        mock_response.choices[0].message = ChatCompletionOutputMessage(role="assistant")
+        messages = [{"role": "tool-call", "content": "Test message"}]
+        _ = model(messages)
+        # With an empty mapping, roles should remain unchanged
+        assert model.client.chat_completion.call_args.kwargs["messages"][0]["role"] == "tool-call"
+
     def test_init_model_with_tokens(self):
         model = InferenceClientModel(model_id="test-model", token="abc")
         assert model.client.token == "abc"

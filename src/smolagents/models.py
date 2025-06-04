@@ -349,9 +349,12 @@ class Model:
         """
         # Clean and standardize the message list
         flatten_messages_as_text = kwargs.pop("flatten_messages_as_text", self.flatten_messages_as_text)
+        role_conversions = (
+            tool_role_conversions if custom_role_conversions is None else custom_role_conversions
+        )
         messages = get_clean_message_list(
             messages,
-            role_conversions=custom_role_conversions or tool_role_conversions,
+            role_conversions=role_conversions,
             convert_images_to_image_urls=convert_images_to_image_urls,
             flatten_messages_as_text=flatten_messages_as_text,
         )
